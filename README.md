@@ -1,40 +1,46 @@
-D3 Boilerplate
+# 🚲 BLUEbikes – Interactive Station Map  
+CS 171 • Lab 12
 
-A minimal starter template for problem-sets and homeworks in **CS 171: Data
-Visualization**.  
-It gives you:
-
-* Bootstrap 5 grid for quick responsive layout  
-* Google Font **Roboto**  
-* Included D3 v7 script tag  
-* Empty `css/style.css` and `js/main.js` files wired up  
-* A colourful placeholder layout so you can see the grid behave
+An interactive leaflet.js map that plots every active **BLUEbikes** station in
+the Greater-Boston area.  Hover to see the station name; the headline keeps an
+up-to-date count of total stations.:contentReference[oaicite:0]{index=0}
 
 ---
 
-## 🗂 Folder structure
+## ✨ Features
+| Feature | Description |
+|---------|-------------|
+| **Leaflet map** | Open-Street-Map tiles served via Leaflet 1.7 |
+| Dynamic station layer | Circles sized by dock capacity, coloured Boston-blue |
+| Station tooltip | Shows the full station name on hover |
+| Live counter | `<span id="station-count">` auto-updates with dataset size |
 
+---
 
-		├── index.html # main entry (this file shows the sample layout)
+## Tech stack
+| Library | Role |
+|---------|------|
+| **Leaflet 1.7** | Slippy map & marker layer |
+| **D3.js v7**   | CSV/JSON loading & data binding |
+| **Bootstrap 5.1** | Responsive layout & typography |
+| **Google Fonts – Roboto** | Primary typeface |
+
+---
+
+## File structure
+
+		├── index.html # main page (map placeholder + headline)
 		├── css/
-		│ └── style.css # put ALL custom styles here
-		└── js/
-		└── main.js # D3 / interaction logic goes here
+		│ ├── leaflet.css # default leaflet styles
+		│ └── style.css # lab-specific overrides
+		├── js/
+		│ ├── leaflet.js # minified Leaflet library
+		│ ├── stationMap.js # class that builds the leaflet layer
+		│ └── main.js # loads data & instantiates StationMap
+		└── data/
+		└── bluebikes_stations.json
 		
 
----
+*(Folder names may vary slightly – update if you moved assets.)*
 
-## 🚀 Quick start
-
-```bash
-git clone https://github.com/your-user/cs171-boilerplate.git
 		
-		
-
-### What you may want to adjust
-
-* **Project title / description** – change the first two lines to match your
-  actual assignment.
-* **Repository URL** in `git clone` example.
-* Add screenshots or GIFs under an **Assets** section once you build your
-  visualisation.
