@@ -1,46 +1,40 @@
-# 🌍 Wealth & Health of Nations
+D3 Boilerplate
 
-Interactive D3.js scatter-plot that shows life-expectancy (health) versus income
-(wealth) for every country over time. A year slider animates the chart so users
-can observe global trends and regional differences from 1800 up to the present.
+A minimal starter template for problem-sets and homeworks in **CS 171: Data
+Visualization**.  
+It gives you:
 
-> Based on Hans Rosling’s celebrated “Gapminder” visualisation.
-
----
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| Animated year slider | Drag or play to watch the points move through time |
-| Bubble size | Proportional to population |
-| Bubble colour | Encodes world region |
-| Tooltip | Hover to view country name and exact values |
-| Responsive layout | SVG scales to fit any viewport width (Bootstrap grid) |
+* Bootstrap 5 grid for quick responsive layout  
+* Google Font **Roboto**  
+* Included D3 v7 script tag  
+* Empty `css/style.css` and `js/main.js` files wired up  
+* A colourful placeholder layout so you can see the grid behave
 
 ---
 
-## Tech stack
-
-| Library / Tool | Purpose |
-|----------------|---------|
-| **D3.js v7**   | SVG rendering, scales, axes, transitions |
-| **Bootstrap 5.1** | Responsive container & quick spacing |
-| **CSV / JSON** | Gapminder-style time-series dataset |
-
----
-
-## File structure
+## 🗂 Folder structure
 
 
-		├── index.html # main page 
-
+		├── index.html # main entry (this file shows the sample layout)
 		├── css/
-		│ └── style.css # custom colours & tooltip styles
-		├── js/
-		│ ├── main.js # loads data & draws scatter-plot
-		│ └── slider.js # (optional) reusable year-slider component
-		└── data/
-		└── wealth-health-gdp-lifeexp.csv
+		│ └── style.css # put ALL custom styles here
+		└── js/
+		└── main.js # D3 / interaction logic goes here
+		
+
+---
+
+## 🚀 Quick start
+
+```bash
+git clone https://github.com/your-user/cs171-boilerplate.git
 		
 		
+
+### What you may want to adjust
+
+* **Project title / description** – change the first two lines to match your
+  actual assignment.
+* **Repository URL** in `git clone` example.
+* Add screenshots or GIFs under an **Assets** section once you build your
+  visualisation.
