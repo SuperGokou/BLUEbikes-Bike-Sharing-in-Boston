@@ -4,7 +4,7 @@ An interactive web visualization that maps all active BLUEbikes stations across 
 
 ---
 
-## Demo
+**Demo**: https://supergokou.github.io/BLUEbikes-Bike-Sharing-in-Boston/
 
 The application displays:
 - **400+ bike-sharing stations** with real-time data from the BLUEbikes GBFS API
