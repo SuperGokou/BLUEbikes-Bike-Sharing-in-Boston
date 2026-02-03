@@ -1,28 +1,241 @@
-
+/* Base Styles */
+* {
+    box-sizing: border-box;
+}
 
 body {
-  font-family: 'Roboto', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    margin: 0;
+    padding: 0;
 }
 
-h1 {
-  font-weight: 100;
-  font-size: 30px;
-  margin-top: 50px;
-  margin-bottom: 20px;
+/* Header */
+.app-header {
+    padding: 24px 0;
+    margin-bottom: 16px;
 }
 
-h1 .divider {
-	margin: 0 8px;
+.header-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
-h1 .sub-headline {
-	color: #888;
-	font-weight: 300;
+.app-title {
+    font-weight: 700;
+    font-size: 32px;
+    color: #0066cc;
+    margin: 0;
+    letter-spacing: -0.5px;
 }
 
+.divider {
+    width: 2px;
+    height: 32px;
+    background: #dee2e6;
+}
 
-/*Specify size of the map container for leaflet*/
+.header-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.subtitle {
+    font-weight: 300;
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.station-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.station-badge #station-count {
+    font-weight: 700;
+    color: #0066cc;
+    font-size: 16px;
+}
+
+/* Map Container */
+.map-wrapper {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
 #station-map {
     width: 100%;
     height: 600px;
+    background: #e9ecef;
+    transition: opacity 0.3s ease;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 1000;
+}
+
+.loading-text {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Legend */
+.map-legend {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.map-legend h6 {
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.legend-color {
+    width: 24px;
+    height: 4px;
+    border-radius: 2px;
+}
+
+/* Popup Styles */
+.station-popup h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #212529;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.station-popup p {
+    font-size: 13px;
+    color: #6c757d;
+    margin: 0;
+}
+
+.station-popup strong {
+    color: #495057;
+}
+
+/* Leaflet Popup Overrides */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+    margin: 12px 16px;
+    min-width: 160px;
+}
+
+.leaflet-popup-tip {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+.app-footer {
+    padding: 24px 0;
+    text-align: center;
+}
+
+.app-footer p {
+    font-size: 13px;
+    color: #6c757d;
+    margin: 0;
+}
+
+.app-footer a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.app-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Error Alert */
+.alert-danger {
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 16px 0;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .divider {
+        display: none;
+    }
+
+    .app-title {
+        font-size: 24px;
+    }
+
+    #station-map {
+        height: 450px;
+    }
+
+    .legend-items {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    #station-map {
+        height: 350px;
+    }
+
+    .legend-item {
+        font-size: 12px;
+    }
 }

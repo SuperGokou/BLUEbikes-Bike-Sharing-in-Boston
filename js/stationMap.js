@@ -1,107 +1,105 @@
-
-/*
- *  StationMap - Object constructor function
- *  @param _parentElement   -- HTML element in which to draw the visualization
- *  @param _data            -- Array with all stations of the bike-sharing network
+/**
+ * StationMap - Interactive Leaflet map visualization for bike-sharing stations
+ * @param {string} parentElement - HTML element ID to render the map
+ * @param {Array} displayData - Array of station objects with name, capacity, lat, lon
+ * @param {Array} mapCenter - [latitude, longitude] for initial map center
+ * @param {Object} MBTALinesData - GeoJSON data for MBTA transit lines
  */
-
 class StationMap {
 
-	/*
-	 *  Constructor method
-	 */
-	constructor(parentElement, displayData, mapCenter, MBTALinesData) {
-		this.parentElement = parentElement;
-		this.displayData = displayData;
-		this.mapCenter = mapCenter;
-		this.MBTALinesData = MBTALinesData;
+    constructor(parentElement, displayData, mapCenter, MBTALinesData) {
+        this.parentElement = parentElement;
+        this.displayData = displayData;
+        this.mapCenter = mapCenter;
+        this.MBTALinesData = MBTALinesData;
 
-		this.initVis();
-	}
+        this.initVis();
+    }
 
+    initVis() {
+        let vis = this;
 
-	/*
-	 *  Initialize station map
-	 */
-	initVis () {
-		let vis = this;
+        // Set the path for Leaflet marker images
+        L.Icon.Default.imagePath = 'img/';
 
-		// Set the path for Leaflet images
-		L.Icon.Default.imagePath = 'img/';
+        // Initialize map centered on Boston
+        vis.map = L.map(vis.parentElement, {
+            zoomControl: true,
+            scrollWheelZoom: true
+        }).setView(vis.mapCenter, 13);
 
-		vis.map = L.map(vis.parentElement).setView(vis.mapCenter, 13);
-		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(vis.map);
+        // Add OpenStreetMap tile layer (HTTPS)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(vis.map);
 
-		vis.markerGroup = L.layerGroup().addTo(vis.map);
+        // Create layer group for markers
+        vis.markerGroup = L.layerGroup().addTo(vis.map);
 
-		let LeafIcon = L.Icon.extend({
-			options: {
-				shadowUrl: 'img/marker-shadow.png',
-				iconSize: [25, 41],
-				iconAnchor: [12, 41],
-				popupAnchor: [0, -28]
-			}
-		});
+        // Define custom marker icon
+        let LeafIcon = L.Icon.extend({
+            options: {
+                shadowUrl: 'img/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [0, -28]
+            }
+        });
 
-		vis.redMarker = new LeafIcon({ iconUrl: 'img/marker-red.png' });
-		vis.blueMarker = new LeafIcon({ iconUrl: 'img/marker-blue.png' });
+        vis.blueMarker = new LeafIcon({ iconUrl: 'img/marker-blue.png' });
 
+        // Render MBTA transit lines
+        if (vis.MBTALinesData) {
+            L.geoJson(vis.MBTALinesData, {
+                style: feature => ({
+                    color: vis.getStyleForLine(feature.properties.LINE),
+                    weight: 4,
+                    opacity: 0.8
+                })
+            }).addTo(vis.map);
+        }
 
-		L.geoJson(vis.MBTALinesData, {
-			style: feature => {
-				return {
-					color: vis.getStyleForLine(feature.properties.LINE),
-					weight: 12,
-					opacity: 0.7,
-				};
-			}
-		}).addTo(vis.map);
+        vis.wrangleData();
+    }
 
-		vis.wrangleData();
-	}
+    wrangleData() {
+        let vis = this;
+        vis.updateVis();
+    }
 
+    updateVis() {
+        let vis = this;
 
-	/*
-	 *  Data wrangling
-	 */
-	wrangleData () {
-		let vis = this;
+        // Clear existing markers
+        vis.markerGroup.clearLayers();
 
-		// No data wrangling/filtering needed
+        // Add markers for each station
+        vis.displayData.forEach(station => {
+            let marker = L.marker([station.latitude, station.longitude], {
+                icon: vis.blueMarker,
+                title: station.name
+            }).bindPopup(`
+                <div class="station-popup">
+                    <h4>${station.name}</h4>
+                    <p><strong>Capacity:</strong> ${station.capacity} docks</p>
+                </div>
+            `);
 
-		// Update the visualization
-		vis.updateVis();
-	}
+            vis.markerGroup.addLayer(marker);
+        });
+    }
 
-	updateVis() {
-		let vis = this;
+    // Map MBTA line names to official brand colors
+    getStyleForLine(lineName) {
+        const lineColors = {
+            'RED': '#DA291C',
+            'GREEN': '#00843D',
+            'BLUE': '#003DA5',
+            'ORANGE': '#ED8B00',
+            'SILVER': '#7C878E'
+        };
 
-		// Clear existing markers
-		vis.markerGroup.clearLayers();
-
-		// Add a marker at the position of the SEC at Harvard University: Latitude | Longitude
-		// L.marker([42.363230492629455, -71.12731607927883]).addTo(vis.map);
-
-		// Loop through the dataset and append a marker for each station
-		vis.displayData.forEach(station => {
-			let marker = L.marker([station.latitude, station.longitude], { icon: vis.blueMarker })
-				.bindPopup(`<b>${station.name}</b><br>Capacity: ${station.capacity}`);
-			vis.markerGroup.addLayer(marker);
-		});
-	}
-	getStyleForLine(lineName) {
-		let lineColors = {
-			'RED': 		'#ff0000',
-			'GREEN': 	'#00ff00',
-			'BLUE': 	'#0000ff',
-			'ORANGE': 	'#ff8000',
-			'SILVER': 	'#c0c0c0'
-		};
-
-		return lineColors[lineName] || '#000000'; // Default color if line name not found
-	}
-
+        return lineColors[lineName] || '#333333';
+    }
 }
-

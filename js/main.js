@@ -1,57 +1,88 @@
 // Variable for the visualization instance
 let stationMap;
-let lineData;
 
-// Hubway JSON feed
-let url = 'https://gbfs.bluebikes.com/gbfs/en/station_information.json';
+// BLUEbikes GBFS API endpoint (using CORS proxy for local development)
+const BLUEBIKES_API_URL = 'https://gbfs.bluebikes.com/gbfs/en/station_information.json';
+const CORS_PROXY = 'https://corsproxy.io/?';
+const MBTA_LINES_URL = 'data/MBTA-Lines.json';
 
-/*d3.json(url).then(jsonData =>{
-	console.log(jsonData);
-});*/
+// Boston city center coordinates
+const BOSTON_CENTER = [42.360082, -71.058880];
 
-d3.json('data/MBTA-Lines.json').then(data => {
-    // Now you have your data, you can create a GeoJSON layer
-    lineData = data;
-    console.log(lineData);
-});
+// Show loading state
+function showLoading(show) {
+    const loadingEl = document.getElementById('loading-indicator');
+    const mapEl = document.getElementById('station-map');
+    if (loadingEl) {
+        loadingEl.style.display = show ? 'flex' : 'none';
+    }
+    if (mapEl) {
+        mapEl.style.opacity = show ? '0.5' : '1';
+    }
+}
 
-fetch(url, function (d) {
-    console.log(d)
-})
-    .then(response => response.json())
-    .then(data => {
-        gettingStarted(data)
-    });
+// Display error message to user
+function showError(message) {
+    const countEl = document.getElementById('station-count');
+    if (countEl) {
+        countEl.innerText = 'Error';
+    }
+    const errorEl = document.getElementById('error-message');
+    if (errorEl) {
+        errorEl.innerText = message;
+        errorEl.style.display = 'block';
+    }
+}
 
-// function that gets called once data has been fetched.
-// We're handing over the fetched data to this function.
-// From the data, we're creating the final data structure we need and create a new instance of the StationMap
-function gettingStarted(data) {
+// Fetch using CORS proxy for cross-origin requests
+async function fetchWithCorsProxy(url) {
+    const proxyResponse = await fetch(CORS_PROXY + encodeURIComponent(url));
+    if (!proxyResponse.ok) throw new Error('Failed to fetch data');
+    return proxyResponse.json();
+}
 
-    // log data
-    console.log(data)
+// Initialize the application
+async function init() {
+    showLoading(true);
 
-    // Extract list with stations from JSON response
-    let stations = data.data.stations;
+    try {
+        // Fetch both data sources in parallel
+        const [mbtaResponse, stationResponse] = await Promise.all([
+            d3.json(MBTA_LINES_URL),
+            fetchWithCorsProxy(BLUEBIKES_API_URL)
+        ]);
 
-    // create empty data structure
-    let displayData = [];
+        // Process station data
+        const displayData = processStationData(stationResponse);
 
-    // Prepare data by looping over stations and populating empty data structure
-    stations.forEach(station => {
-        let stationInfo = {
-            name: station.name,
-            capacity: station.capacity,
-            latitude: station.lat,
-            longitude: station.lon
-        };
-        displayData.push(stationInfo);
-    });
-    console.log('Display Data:', displayData);
+        // Update station count in DOM
+        document.getElementById('station-count').innerText = displayData.length;
 
-    // Display number of stations in DOM
-    document.getElementById('station-count').innerText = stations.length;
+        // Instantiate visualization
+        stationMap = new StationMap('station-map', displayData, BOSTON_CENTER, mbtaResponse);
 
-    // Instantiate visualization object (bike-sharing stations in Boston)
-    stationMap = new StationMap("station-map", displayData, [42.360082, -71.058880], lineData);
+    } catch (error) {
+        showError('Failed to load data. Please refresh the page.');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Transform raw API response into display-ready format
+function processStationData(data) {
+    const stations = data.data.stations;
+
+    return stations.map(station => ({
+        name: station.name,
+        capacity: station.capacity,
+        latitude: station.lat,
+        longitude: station.lon
+    }));
+}
+
+// Start the application when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
 }

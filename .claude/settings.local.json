@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"J:\\\\Project Files\\\\MyProject\\\\BLUEbikes-Bike-Sharing-in-Boston\" log --oneline --all)"
+    ]
+  }
+}
