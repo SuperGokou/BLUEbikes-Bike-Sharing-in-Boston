@@ -1,9 +1,8 @@
 // Variable for the visualization instance
 let stationMap;
 
-// BLUEbikes GBFS API endpoint (using CORS proxy for local development)
+// BLUEbikes GBFS API endpoint
 const BLUEBIKES_API_URL = 'https://gbfs.bluebikes.com/gbfs/en/station_information.json';
-const CORS_PROXY = 'https://corsproxy.io/?';
 const MBTA_LINES_URL = 'data/MBTA-Lines.json';
 
 // Boston city center coordinates
@@ -34,11 +33,11 @@ function showError(message) {
     }
 }
 
-// Fetch using CORS proxy for cross-origin requests
-async function fetchWithCorsProxy(url) {
-    const proxyResponse = await fetch(CORS_PROXY + encodeURIComponent(url));
-    if (!proxyResponse.ok) throw new Error('Failed to fetch data');
-    return proxyResponse.json();
+// Fetch station data directly (GBFS APIs support CORS)
+async function fetchStationData(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch data');
+    return response.json();
 }
 
 // Initialize the application
@@ -49,7 +48,7 @@ async function init() {
         // Fetch both data sources in parallel
         const [mbtaResponse, stationResponse] = await Promise.all([
             d3.json(MBTA_LINES_URL),
-            fetchWithCorsProxy(BLUEBIKES_API_URL)
+            fetchStationData(BLUEBIKES_API_URL)
         ]);
 
         // Process station data
